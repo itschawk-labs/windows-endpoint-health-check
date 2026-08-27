@@ -17,17 +17,31 @@ The script reports:
 - Processor model, physical cores, and logical processors
 - Total and available physical memory
 - Fixed-disk capacity and available disk space
+- PowerShell execution policy (reported for visibility; not treated as a security boundary)
+- User Account Control status and administrator consent policy
+- Five most recently installed Windows hotfixes
+
+It then runs a baseline assessment covering:
+
+- Windows Firewall status across all profiles
 - Microsoft Defender antivirus status
 - Microsoft Defender real-time protection status
-- Microsoft Defender signature update timestamp
-- Five most recently installed Windows hotfixes
-- Automated system-drive free-space assessment
+- Microsoft Defender behavior monitoring status
+- Microsoft Defender network inspection status
+- SMBv1 protocol status
+- Built-in Guest account status
+- User Account Control status
+
+Each check produces a PASS or WARN result. Local Administrators and other privileged accounts require manual review and are not evaluated by this script.
+
+The script reports a summary containing the number of passed and warning conditions.
+
+PASS indicates the defined condition was satisfied. It does not indicate comprehensive endpoint security.
 
 ## Requirements
 
 - Windows 10 or Windows 11
 - Windows PowerShell 5.1 or a compatible PowerShell environment
-- Microsoft Defender cmdlets for Defender status reporting
 
 Running PowerShell as Administrator is recommended for consistent access to all system information.
 
@@ -40,15 +54,6 @@ Open PowerShell, navigate to the directory containing the script, and run:
 ```
 
 If PowerShell execution policy prevents the script from running, review the execution-policy configuration before making any changes.
-
-## Disk-Space Assessment
-
-The script evaluates available space on the Windows system drive.
-
-- **HEALTHY:** 20% or more free space
-- **WARNING:** Less than 20% free space
-
-The threshold is intended as a simple administrative health indicator rather than a formal industry security benchmark.
 
 ## Example Output
 
@@ -73,7 +78,6 @@ Potential future development includes:
 - Additional Microsoft Defender checks
 - BitLocker status
 - Secure Boot status
-- Windows Firewall status
 - Event-log health checks
 - Configurable health thresholds
 - Export to CSV or JSON
