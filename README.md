@@ -54,7 +54,7 @@ The threshold is intended as a simple administrative health indicator rather tha
 
 The console output is organized into numbered sections and uses color-coded status messages to make results easier to review.
 
-![Example Output](screenshots/example-output.png)
+Example output is provided as Example.png
 
 ## Purpose
 
