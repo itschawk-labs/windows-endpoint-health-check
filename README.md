@@ -1,10 +1,12 @@
 # Windows Endpoint Health Check
 
-A lightweight PowerShell utility for collecting common Windows endpoint health and security information from a local system.
+A lightweight PowerShell utility for collecting common Windows endpoint health information and performing a basic automated disk-space assessment.
 
 ## Overview
 
 This project demonstrates the use of PowerShell for Windows endpoint administration, system-information collection, and basic automated health assessment.
+
+The script collects several common endpoint-health indicators from a local Windows system and presents them in a single readable console report.
 
 The script is read-only and does not modify Windows configuration.
 
@@ -17,33 +19,31 @@ The script reports:
 - Processor model, physical cores, and logical processors
 - Total and available physical memory
 - Fixed-disk capacity and available disk space
-- PowerShell execution policy (reported for visibility; not treated as a security boundary)
-- User Account Control status and administrator consent policy
-- Five most recently installed Windows hotfixes
-
-It then runs a baseline assessment covering:
-
-- Windows Firewall status across all profiles
 - Microsoft Defender antivirus status
 - Microsoft Defender real-time protection status
-- Microsoft Defender behavior monitoring status
-- Microsoft Defender network inspection status
-- SMBv1 protocol status
-- Built-in Guest account status
-- User Account Control status
+- Microsoft Defender antispyware status
+- Microsoft Defender signature update timestamp
+- Five most recently installed Windows hotfixes
+- Automated system-drive free-space assessment
 
-Each check produces a PASS or WARN result. Local Administrators and other privileged accounts require manual review and are not evaluated by this script.
+## Automated Assessment
 
-The script reports a summary containing the number of passed and warning conditions.
+The final section evaluates available space on the Windows system drive using a simple administrative threshold:
 
-PASS indicates the defined condition was satisfied. It does not indicate comprehensive endpoint security.
+- **HEALTHY:** 20% or more free space
+- **WARNING:** Less than 20% free space
+- **UNKNOWN:** System-drive information could not be reliably retrieved
+
+This threshold is intended as a basic endpoint-health indicator. It is not a formal security, compliance, or vendor benchmark.
 
 ## Requirements
 
 - Windows 10 or Windows 11
-- Windows PowerShell 5.1 or a compatible PowerShell environment
+- Windows PowerShell 5.1 or a compatible Windows PowerShell environment
+- Windows CIM/WMI functionality
+- Microsoft Defender cmdlets for Defender reporting
 
-Running PowerShell as Administrator is recommended for consistent access to all system information.
+Running PowerShell as Administrator is recommended for consistent access to system information.
 
 ## Usage
 
@@ -53,36 +53,94 @@ Open PowerShell, navigate to the directory containing the script, and run:
 .\EndpointHealthCheck.ps1
 ```
 
-If PowerShell execution policy prevents the script from running, review the execution-policy configuration before making any changes.
+The script performs read-only queries and does not require configuration changes to perform its normal checks.
 
 ## Example Output
 
-The console output is organized into numbered sections and uses color-coded status messages to make results easier to review.
+The console output is organized into numbered sections and uses color-coded status messages to make the results easier to review.
 
-Example output is provided as Example.png
+![Windows Endpoint Health Check example output](screenshots/example-output.png)
+
+Example output from the initial local test run. The current revision uses more precise terminology for disk space and installed hotfixes.
+
+## PowerShell Concepts Demonstrated
+
+This project uses several common PowerShell and Windows-administration concepts, including:
+
+- `Get-CimInstance`
+- Windows CIM classes
+- PowerShell pipelines
+- `Select-Object`
+- Calculated properties
+- `PSCustomObject`
+- Date/time arithmetic
+- Sorting and filtering
+- Microsoft Defender cmdlets
+- Windows hotfix enumeration
+- Conditional logic
+- Basic error handling
+- Formatted console output
 
 ## Purpose
 
-I created this project as a practical exercise in PowerShell-based Windows endpoint administration. It combines system-information collection with a simple automated assessment rather than relying solely on manually reviewing command output.
+I created this project as a practical exercise in PowerShell-based Windows endpoint administration.
+
+The goal was to consolidate several common system-health checks into a repeatable script and then add a simple automated assessment rather than relying entirely on manual review.
+
+The project reinforces a basic administrative principle:
+
+> If a diagnostic process is repeatable, it is a candidate for automation.
 
 ## Scope and Limitations
 
-This is a lightweight endpoint health-check utility, not a complete enterprise monitoring, vulnerability-assessment, or security-baseline solution.
+This is a lightweight local endpoint-health utility.
 
-The script currently evaluates a single local Windows endpoint and does not make configuration changes.
+It is not:
+
+- A vulnerability scanner
+- An endpoint detection and response platform
+- A full monitoring platform
+- A patch-compliance assessment
+- A hardware diagnostic utility
+- A comprehensive endpoint-security assessment
+
+The disk section reports capacity and free space; it does not evaluate physical disk or SMART health.
+
+The hotfix section displays recently installed hotfix information; it does not prove that every applicable Windows update has been installed.
+
+Microsoft Defender information reflects the state reported by the local Defender cmdlets when the script executes.
+
+The script currently evaluates a single local Windows endpoint.
+
+## Safety
+
+The script performs read-only queries.
+
+It does not:
+
+- Modify Windows configuration
+- Change Microsoft Defender settings
+- Install or remove updates
+- Modify disks or filesystems
+- Change user accounts
+- Modify registry settings
+- Change services
+- Alter PowerShell execution policy
 
 ## Future Improvements
 
 Potential future development includes:
 
-- Additional Microsoft Defender checks
-- BitLocker status
-- Secure Boot status
-- Event-log health checks
-- Configurable health thresholds
 - Export to CSV or JSON
+- Configurable disk-space thresholds
+- Additional system-health checks
+- Event-log health information
+- Optional service-status reporting
 - Remote endpoint support
+- Structured reporting for repeated administrative checks
 
-## Safety
+These are future possibilities and are intentionally not implemented in the current version.
 
-The script performs read-only queries and does not modify Windows settings, security controls, registry values, accounts, or system configuration.
+## License
+
+This project is licensed under the MIT License. See `LICENSE` for details.
